@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import random
 
 
 def get_entropy(prob):
@@ -37,13 +38,13 @@ def info_gained(left, right):
 
 
 def create_bootstrap(x_train, y_train):
-    boot_indxs = list(np.random.choice(range(len(x_train), len(x_train), replace=True)))
+    boot_indxs = list(np.random.choice(range(len(x_train)), len(x_train), replace=True))
     out_of_bound_indxs = [i for i in range(len(x_train)) if i not in boot_indxs]
 
     x_boot = x_train.iloc[boot_indxs].values
-    y_boot = y_train.iloc[boot_indxs]
-    x_out_of_bound = x_train.iloc[x_out_of_bound].values
-    y_out_of_bound = y_train.iloc[y_out_of_bound]
+    y_boot = y_train[boot_indxs]
+    x_out_of_bound = x_train.iloc[out_of_bound_indxs].values
+    y_out_of_bound = y_train[out_of_bound_indxs]
 
     return x_boot, y_boot, x_out_of_bound, y_out_of_bound
     
@@ -60,7 +61,7 @@ def get_out_of_bag_score(tree, x_test, y_test):
 
 
 def find_split(x_boot, y_boot, max_num_feature):
-    features - list()
+    features = list()
     num_features = len(x_boot[0])
 
     while len(features) <= max_num_feature:
@@ -98,7 +99,7 @@ def find_split(x_boot, y_boot, max_num_feature):
                 best_info_gained = split_ig
                 left_child['x_boot'] = np.array(left_child['x_boot'])
                 right_child['x_boot'] = np.array(right_child['x_boot'])
-                node = {'information_gain': split_info_gain,
+                node = {'information_gain': split_ig,
                     'left_child': left_child,
                     'right_child': right_child,
                     'split_point': split_point,
@@ -190,13 +191,4 @@ def predict_random_forest(tree_list, x_test):
         pred_list.append(final_pred)
     
     return np.array(pred_list)
-
-
-
-
-    
-
-    
-
-print(get_entropy(1))
 
